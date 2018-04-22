@@ -4,7 +4,7 @@ import io.crnk.client.CrnkClient;
 import io.crnk.core.repository.RelationshipRepositoryV2;
 import io.crnk.core.repository.ResourceRepositoryV2;
 import io.crnk.core.utils.Supplier;
-import io.crnk.setup.vertx.CrnkVehicle;
+import io.crnk.setup.vertx.CrnkVerticle;
 import io.crnk.test.mock.ClientTestModule;
 import io.crnk.test.mock.models.RelationIdTestResource;
 import io.crnk.test.mock.models.Schedule;
@@ -21,7 +21,7 @@ import java.net.ServerSocket;
 
 public class VertxTestContainer implements TestContainer {
 
-	private CrnkVehicle vehicle;
+	private CrnkVerticle vehicle;
 
 	private Supplier<CrnkClient> client;
 
@@ -50,21 +50,20 @@ public class VertxTestContainer implements TestContainer {
 		VertxOptions options = new VertxOptions();
 		options.setMaxEventLoopExecuteTime(Long.MAX_VALUE);
 
-		vehicle = new CrnkVehicle(port);
+		SingleSubject waitSubject = SingleSubject.create();
+		Handler<AsyncResult<String>> completionHandler = event -> waitSubject.onSuccess(event.result());
+
+		vehicle = new CrnkVerticle(port);
 		vertx = Vertx.vertx(options);
-		vertx.deployVerticle(vehicle);
+		vertx.deployVerticle(vehicle, completionHandler);
 		vehicle.testModule.clear();
+		waitSubject.blockingGet();
 	}
 
 	@Override
 	public void stop() {
 		SingleSubject waitSubject = SingleSubject.create();
-		Handler<AsyncResult<Void>> completionHandler = new Handler<AsyncResult<Void>>() {
-			@Override
-			public void handle(AsyncResult<Void> event) {
-				waitSubject.onSuccess("test");
-			}
-		};
+		Handler<AsyncResult<Void>> completionHandler = event -> waitSubject.onSuccess("test");
 		vertx.close(completionHandler);
 		waitSubject.blockingGet();
 

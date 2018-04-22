@@ -304,9 +304,9 @@ the following dependencies specified:
 An example Vert.x vehicle may then look like:
 
 [source]
-.CrnkVehicle.java
+.CrnkVerticle.java
 ----
-include::../../../../crnk-setup/crnk-setup-vertx/src/test/java/io/crnk/setup/vertx/CrnkVehicle.java[tags=docs]
+include::../../../../crnk-setup/crnk-setup-vertx/src/test/java/io/crnk/setup/vertx/CrnkVerticle.java[tags=docs]
 ----
 
 `CrnkVertxHandler` holds the Crnk setup. Its constructor takes a `Consumer<CrnkBoot>` that allows the customization

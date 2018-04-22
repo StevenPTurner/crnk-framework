@@ -8,15 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // tag::docs[]
-public class CrnkVehicle extends AbstractVerticle {
+public class CrnkVerticle extends AbstractVerticle {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CrnkVehicle.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CrnkVerticle.class);
 
 	public ReactiveTestModule testModule = new ReactiveTestModule();
 
 	private int port;
 
-	public CrnkVehicle(int port) {
+	public CrnkVerticle(int port) {
 		this.port = port;
 	}
 
