@@ -17,6 +17,7 @@ include ':crnk-brave'
 include ':crnk-monitor-brave4'
 include ':crnk-security'
 include ':crnk-activiti'
+include ':crnk-setup:crnk-setup-vertx'
 
 
 include ':crnk-operations'

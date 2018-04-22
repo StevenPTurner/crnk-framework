@@ -98,10 +98,7 @@ gradle.beforeProject { Project project ->
 		}
 
 		if (!docs && !examples && !testProject && !legacyBraveProject) {
-			// https://about.sonarqube.com/get-started/
-			apply plugin: "org.sonarqube"
 			apply plugin: "jacoco"
-
 			jacoco {
 				toolVersion = "0.7.6.201602180812"
 			}
@@ -128,11 +125,6 @@ gradle.beforeProject { Project project ->
 			rootProject.coveralls.sourceDirs.addAll(sourceSets.main.allSource.srcDirs.flatten())
 
 
-			sonarqube {
-				properties {
-					property 'sonar.coverage.exclusions', "**/legacy/**"
-				}
-			}
 
 			jacocoTestReport {
 				reports {

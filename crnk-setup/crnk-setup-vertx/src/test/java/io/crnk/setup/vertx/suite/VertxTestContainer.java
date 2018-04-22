@@ -1,34 +1,49 @@
-package io.crnk.servlet.resource;
+package io.crnk.setup.vertx.suite;
 
 import io.crnk.client.CrnkClient;
 import io.crnk.core.repository.RelationshipRepositoryV2;
 import io.crnk.core.repository.ResourceRepositoryV2;
 import io.crnk.core.utils.Supplier;
+import io.crnk.setup.vertx.CrnkVehicle;
+import io.crnk.test.mock.ClientTestModule;
 import io.crnk.test.mock.models.RelationIdTestResource;
 import io.crnk.test.mock.models.Schedule;
-import io.crnk.test.mock.reactive.ReactiveTestModule;
 import io.crnk.test.suite.TestContainer;
+import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 
 import java.io.Serializable;
 
-public class ReactiveServletTestContainer implements TestContainer {
+public class VertxTestContainer implements TestContainer {
 
-	private final ReactiveTestModule testModule;
+	private CrnkVehicle vehicle;
+
 	private Supplier<CrnkClient> client;
 
-	public ReactiveServletTestContainer(ReactiveTestModule testModule, Supplier<CrnkClient> client) {
-		this.client = client;
-		this.testModule = testModule;
+	private VertxOptions options = new VertxOptions();
+
+	private Vertx vertx;
+
+	public VertxTestContainer() {
+		client = () -> {
+			CrnkClient client = new CrnkClient(this.getBaseUrl());
+			client.addModule(new ClientTestModule());
+			return client;
+		};
 	}
 
 	@Override
 	public void start() {
-		testModule.clear();
+		vehicle = new CrnkVehicle();
+		vertx = Vertx.vertx(options);
+		vertx.deployVerticle(vehicle);
+		vehicle.testModule.clear();
 	}
 
 	@Override
 	public void stop() {
-		testModule.clear();
+		vertx.close();
+		vehicle.testModule.clear();
 	}
 
 	@Override
@@ -44,16 +59,16 @@ public class ReactiveServletTestContainer implements TestContainer {
 	@Override
 	public <T> T getTestData(Class<T> clazz, Object id) {
 		if (clazz == Schedule.class) {
-			return (T) testModule.getScheduleRepository().getMap().get((Long) id);
+			return (T) vehicle.testModule.getScheduleRepository().getMap().get((Long) id);
 		}
 		if (clazz == RelationIdTestResource.class) {
-			return (T) testModule.getRelationIdTestRepository().getMap().get((Long) id);
+			return (T) vehicle.testModule.getRelationIdTestRepository().getMap().get((Long) id);
 		}
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String getBaseUrl() {
-		return client.get().getServiceUrlProvider().getUrl();
+		return "http://127.0.0.1:" + vehicle.port;
 	}
 }
