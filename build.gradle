@@ -157,12 +157,13 @@ gradle.beforeProject { Project project ->
 					archives sourcesJar
 				}
 
+				ext.'signing.secretKeyRingFile' = "${rootProject.projectDir}/secring.gpg"
+
 				signing {
 					required {
 						gradle.taskGraph.hasTask("uploadArchives")
 					}
 					sign configurations.archives
-					secretKeyRingFile = "${rootProject.projectDir}/secring.gpg"
 				}
 
 				uploadArchives {
