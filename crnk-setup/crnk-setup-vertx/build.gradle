@@ -11,3 +11,4 @@ dependencies {
 	testCompile project(':crnk-client')
 	testCompile project(':crnk-home')
 }
+

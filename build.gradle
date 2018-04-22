@@ -32,8 +32,7 @@ ext {
 SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss")
 if (ext.timestampedVersion) {
 	version = BUILD_VERSION_PREFIX + "." + format.format(new Date())
-}
-else {
+} else {
 	version = '0.0.0-SNAPSHOT'
 }
 group = GROUP_ID
@@ -65,7 +64,7 @@ gradle.beforeProject { Project project ->
 			sourceCompatibility = 1.8
 			targetCompatibility = 1.8
 
-			if(!bom) {
+			if (!bom) {
 				dependencies {
 					testCompile group: 'junit', name: 'junit', version: '4.12'
 					testCompile group: 'org.mockito', name: 'mockito-core', version: '1.10.19'
@@ -117,8 +116,7 @@ gradle.beforeProject { Project project ->
 				rootProject.tasks.jacocoRootReport.sourceDirectories = files(sourceSets.main.allSource.srcDirs)
 				rootProject.tasks.jacocoRootReport.classDirectories = mainOutput
 
-			}
-			else {
+			} else {
 				rootProject.tasks.jacocoRootReport.sourceDirectories = sourceDirs.plus(files(sourceSets.main.allSource.srcDirs))
 				rootProject.tasks.jacocoRootReport.classDirectories = classDirs.plus(mainOutput)
 			}
@@ -164,6 +162,7 @@ gradle.beforeProject { Project project ->
 						gradle.taskGraph.hasTask("uploadArchives")
 					}
 					sign configurations.archives
+					secretKeyRingFile = "${rootProject.projectDir}/secring.gpg"
 				}
 
 				uploadArchives {
@@ -222,8 +221,7 @@ gradle.beforeProject { Project project ->
 				}
 
 				tasks.publish.dependsOn(tasks.uploadArchives)
-			}
-			else {
+			} else {
 				task sourcesJar(type: Jar) {
 					from sourceSets.main.allSource
 					classifier = 'sources'
