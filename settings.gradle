@@ -18,8 +18,6 @@ include ':crnk-monitor-brave4'
 include ':crnk-security'
 include ':crnk-activiti'
 include ':crnk-setup:crnk-setup-vertx'
-include ':crnk-setup:crnk-setup-ratpack'
-
 
 include ':crnk-operations'
 include ':crnk-gen-typescript'

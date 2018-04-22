@@ -10,7 +10,6 @@ import io.crnk.servlet.resource.ReactiveServletTestContainer;
 import io.crnk.test.mock.models.Schedule;
 import io.crnk.test.mock.models.Task;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +19,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ReactiveServletTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Ignore // TO expensive
 public class ReactiveStressTest {
 
-	private ReactiveServletTestContainer testContainer;
 
+	private ReactiveServletTestContainer testContainer;
 
 	@Autowired
 	public void setTestContainer(ReactiveServletTestContainer testContainer) {

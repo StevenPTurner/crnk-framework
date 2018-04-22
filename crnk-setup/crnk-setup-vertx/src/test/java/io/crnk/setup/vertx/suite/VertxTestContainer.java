@@ -30,6 +30,7 @@ public class VertxTestContainer implements TestContainer {
 			client.addModule(new ClientTestModule());
 			return client;
 		};
+		options.setMaxEventLoopExecuteTime(Long.MAX_VALUE);
 	}
 
 	@Override
