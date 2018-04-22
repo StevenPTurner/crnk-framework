@@ -14,7 +14,11 @@ public class CrnkVehicle extends AbstractVerticle {
 
 	public ReactiveTestModule testModule = new ReactiveTestModule();
 
-	public int port = 53423;
+	private int port;
+
+	public CrnkVehicle(int port) {
+		this.port = port;
+	}
 
 	@Override
 	public void start() {
@@ -30,6 +34,5 @@ public class CrnkVehicle extends AbstractVerticle {
 				.subscribe((response) -> LOGGER.debug("delivered response {}", response), error -> LOGGER.debug("error occured", error));
 		server.listen(port);
 	}
-
 }
 // end::docs[]

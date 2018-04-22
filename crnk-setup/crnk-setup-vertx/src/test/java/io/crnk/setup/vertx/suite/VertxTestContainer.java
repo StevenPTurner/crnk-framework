@@ -9,10 +9,15 @@ import io.crnk.test.mock.ClientTestModule;
 import io.crnk.test.mock.models.RelationIdTestResource;
 import io.crnk.test.mock.models.Schedule;
 import io.crnk.test.suite.TestContainer;
+import io.reactivex.subjects.SingleSubject;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.ServerSocket;
 
 public class VertxTestContainer implements TestContainer {
 
@@ -20,9 +25,9 @@ public class VertxTestContainer implements TestContainer {
 
 	private Supplier<CrnkClient> client;
 
-	private VertxOptions options = new VertxOptions();
-
 	private Vertx vertx;
+
+	private int port;
 
 	public VertxTestContainer() {
 		client = () -> {
@@ -30,12 +35,22 @@ public class VertxTestContainer implements TestContainer {
 			client.addModule(new ClientTestModule());
 			return client;
 		};
-		options.setMaxEventLoopExecuteTime(Long.MAX_VALUE);
 	}
 
 	@Override
 	public void start() {
-		vehicle = new CrnkVehicle();
+		try {
+			ServerSocket socket = new ServerSocket(0);
+			port = socket.getLocalPort();
+			socket.close();
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
+
+		VertxOptions options = new VertxOptions();
+		options.setMaxEventLoopExecuteTime(Long.MAX_VALUE);
+
+		vehicle = new CrnkVehicle(port);
 		vertx = Vertx.vertx(options);
 		vertx.deployVerticle(vehicle);
 		vehicle.testModule.clear();
@@ -43,8 +58,20 @@ public class VertxTestContainer implements TestContainer {
 
 	@Override
 	public void stop() {
-		vertx.close();
+		SingleSubject waitSubject = SingleSubject.create();
+		Handler<AsyncResult<Void>> completionHandler = new Handler<AsyncResult<Void>>() {
+			@Override
+			public void handle(AsyncResult<Void> event) {
+				waitSubject.onSuccess("test");
+			}
+		};
+		vertx.close(completionHandler);
+		waitSubject.blockingGet();
+
 		vehicle.testModule.clear();
+		vertx = null;
+		vehicle = null;
+		port = -1;
 	}
 
 	@Override
@@ -70,6 +97,6 @@ public class VertxTestContainer implements TestContainer {
 
 	@Override
 	public String getBaseUrl() {
-		return "http://127.0.0.1:" + vehicle.port;
+		return "http://127.0.0.1:" + port;
 	}
 }
