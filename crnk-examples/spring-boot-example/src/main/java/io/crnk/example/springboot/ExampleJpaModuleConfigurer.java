@@ -8,8 +8,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 
+import io.crnk.example.springboot.domain.model.CampaignEntity;
 import io.crnk.example.springboot.domain.model.ScheduleDto;
 import io.crnk.example.springboot.domain.model.ScheduleEntity;
+import io.crnk.example.springboot.domain.model.SchedulingPeriodEntity;
 import io.crnk.jpa.JpaModuleConfig;
 import io.crnk.jpa.JpaRepositoryConfig;
 import io.crnk.jpa.mapping.JpaMapper;
@@ -35,6 +37,8 @@ public class ExampleJpaModuleConfigurer implements JpaModuleConfigurer {
 	public void configure(JpaModuleConfig config) {
 		// directly expose entity
 		config.addRepository(JpaRepositoryConfig.builder(ScheduleEntity.class).build());
+		config.addRepository(JpaRepositoryConfig.builder(CampaignEntity.class).build());
+		config.addRepository(JpaRepositoryConfig.builder(SchedulingPeriodEntity.class).build());
 
 		// additionally expose entity as a mapped dto
 		config.addRepository(
